@@ -10,7 +10,7 @@ const App = () => {
   ]);
 
   const addCookieSection = () => {
-    setSections([...sections, { title: "新增模块" }]);
+    setSections([...sections, { title: "新饼干" }]);
   };
 
   return (
