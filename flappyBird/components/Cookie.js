@@ -1,21 +1,64 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import ImageComponent from './Images.js'; // 确保路径正确
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import ImageComponent from './Images.js'; 
+import CookiePiece from './CookiePiece.js'; 
+
+
+const EditableTitle = ({ title, onSave }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(title);
+
+  const handleSave = () => {
+    onSave(editedTitle.trim() || title); // 处理空输入和纯空格
+    setIsEditing(false);
+  };
+
+  return isEditing ? (
+    <TextInput
+      value={editedTitle}
+      onChangeText={setEditedTitle}
+      onSubmitEditing={handleSave}
+      onBlur={handleSave}
+      autoFocus
+      /* 其他样式属性保持不变 */
+    />
+  ) : (
+    <TouchableOpacity onPress={() => setIsEditing(true)}>
+      <Text>{title}</Text>
+    </TouchableOpacity>
+  );
+};
 
 
 const CookieSection = ({ title }) => {
+  const [cookies, setCookies] = useState([]);
+  
+
+  const addCookie = () => {
+    setCookies([...cookies, null]);
+  };
+
+
+
   return (
     <View style={styles.sectionContainer}>
       <View style={styles.row}>
         <View style={styles.iconBox} />
-        <Text style={styles.sectionTitle}>{title}</Text>
-        <ImageComponent style={styles.sectionImage} />
+        {/* <Text style={styles.sectionTitle}>{title}</Text> */}
+        <EditableTitle title={title} index={0} />
+        <TouchableOpacity onPress={addCookie}>
+          <ImageComponent style={styles.sectionImage} />
+        </TouchableOpacity>
+        
       </View>
-      <View style={styles.row}>
-        <View style={styles.photoBox} />
-        <View style={styles.photoBox} />
+      <ScrollView horizontal={true} style={styles.scrollView} showsHorizontalScrollIndicator={true}>
+        <View style={styles.row}>
+        {cookies.map((cookie, index) => (
+          <CookiePiece key={index} source={cookie} />
+        ))}
       </View>
-    </View>
+      </ScrollView>
+      </View>
   );
 };
 
@@ -43,12 +86,6 @@ const styles = StyleSheet.create({
   iconBox: {
     width: 28,
     height: 23,
-  },
-  photoBox: {
-    width: 120,
-    height: 120,
-    backgroundColor: "#D9D9D9",
-    marginRight: 11,
   },
   sectionTitle: {
     color: "#000000",
