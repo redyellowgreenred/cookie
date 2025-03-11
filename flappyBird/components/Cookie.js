@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 'react-native';
-import ImageComponent from './Images.js'; 
-import CookiePiece from './CookiePiece.js'; 
-
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Animated } from 'react-native';
+import CookiePiece from './CookiePiece.js'; // 确保路径正确
 
 const EditableTitle = ({ title, onSave }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -29,36 +27,30 @@ const EditableTitle = ({ title, onSave }) => {
   );
 };
 
-
 const CookieSection = ({ title }) => {
   const [cookies, setCookies] = useState([]);
-  
 
   const addCookie = () => {
     setCookies([...cookies, null]);
   };
 
-
-
   return (
     <View style={styles.sectionContainer}>
       <View style={styles.row}>
         <View style={styles.iconBox} />
-        {/* <Text style={styles.sectionTitle}>{title}</Text> */}
-        <EditableTitle title={title} index={0} />
-        <TouchableOpacity onPress={addCookie}>
-          <ImageComponent style={styles.sectionImage} />
+        <EditableTitle title={title} onSave={(newTitle) => console.log(newTitle)} />
+        <TouchableOpacity onPress={addCookie} style={styles.addCookieButton}>
+          <View style={styles.cameraIcon} /> {/* 替换为相机形状 */}
         </TouchableOpacity>
-        
       </View>
       <ScrollView horizontal={true} style={styles.scrollView} showsHorizontalScrollIndicator={true}>
         <View style={styles.row}>
-        {cookies.map((cookie, index) => (
-          <CookiePiece key={index} source={cookie} />
-        ))}
-      </View>
+          {cookies.map((cookie, index) => (
+            <CookiePiece key={index} source={cookie} />
+          ))}
+        </View>
       </ScrollView>
-      </View>
+    </View>
   );
 };
 
@@ -94,6 +86,22 @@ const styles = StyleSheet.create({
   sectionImage: {
     width: 28,
     height: 23,
+  },
+  addCookieButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'black',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cameraIcon: {
+    width: 28,
+    height: 23,
+    backgroundColor: 'white',
+    borderWidth: 2,
+    borderColor: 'black',
+    borderRadius: 5,
   },
 });
 
