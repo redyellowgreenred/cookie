@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Animated } from 'react-native';
 import CookiePiece from './CookiePiece.js'; // 确保路径正确
 
@@ -27,18 +27,22 @@ const EditableTitle = ({ title, onSave }) => {
   );
 };
 
-const CookieSection = ({ title }) => {
+const CookieSection = forwardRef(({ title }, ref) => {
   const [cookies, setCookies] = useState([]);
 
   const addCookie = () => {
-    setCookies([...cookies, null]);
+    setCookies([...cookies, null]); // 添加一个新的 cookie
   };
+
+  useImperativeHandle(ref, () => ({
+    addCookie,
+  }));
 
   return (
     <View style={styles.sectionContainer}>
       <View style={styles.row}>
         <View style={styles.iconBox} />
-        <EditableTitle title={title} onSave={(newTitle) => console.log(newTitle)} />
+        <Text style={styles.sectionTitle}>{title}</Text>
         <TouchableOpacity onPress={addCookie} style={styles.addCookieButton}>
           <View style={styles.cameraIcon} /> {/* 替换为相机形状 */}
         </TouchableOpacity>
@@ -46,13 +50,13 @@ const CookieSection = ({ title }) => {
       <ScrollView horizontal={true} style={styles.scrollView} showsHorizontalScrollIndicator={true}>
         <View style={styles.row}>
           {cookies.map((cookie, index) => (
-            <CookiePiece key={index} source={cookie} />
+            <CookiePiece key={index} />
           ))}
         </View>
       </ScrollView>
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   sectionContainer: {
@@ -66,7 +70,6 @@ const styles = StyleSheet.create({
     borderStyle: "dashed",
     borderWidth: 2,
     borderColor: "#000000",
-    borderDash: [10, 10],
   },
   row: {
     flexDirection: "row",
@@ -82,10 +85,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     color: "#000000",
     fontSize: 17,
-  },
-  sectionImage: {
-    width: 28,
-    height: 23,
   },
   addCookieButton: {
     width: 40,

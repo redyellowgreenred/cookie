@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { SafeAreaView, ScrollView, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import CookieSection from './components/Cookie.js'; // 确保路径正确
 import Sidebar from './components/Sidebar.js';
+import AllCookieButton from './components/AllCookieButton.js';
 
 const App = () => {
+  const sectionRefs = useRef([]); // 用于存储多个 CookieSection 的引用
   const [sections, setSections] = useState([
     { title: "重要照片" },
     { title: "生活日记" }
@@ -17,6 +19,17 @@ const App = () => {
   const addCookieSection = () => {
     setSections([...sections, { title: "新饼干" }]);
   };
+
+  // 收集所有 CookieSection 的 addCookie 方法
+  const addCookieCallbacks = sections.map((section, index) => ({
+    title: section.title,
+    onPress: () => {
+      if (sectionRefs.current[index]) {
+        sectionRefs.current[index].addCookie(); // 调用对应 CookieSection 的 addCookie 方法
+      }
+    },
+    color: 'black', // 按钮颜色
+  }));
 
   return (
     <SafeAreaView style={styles.container}>
@@ -36,9 +49,14 @@ const App = () => {
 
         {/* 动态渲染 CookieSection */}
         {sections.map((section, index) => (
-          <CookieSection key={index} title={section.title} />
+          <CookieSection
+            key={index}
+            ref={(el) => (sectionRefs.current[index] = el)} // 保存每个 CookieSection 的引用
+            title={section.title}
+          />
         ))}
       </ScrollView>
+      <AllCookieButton buttons={addCookieCallbacks} />
     </SafeAreaView>
   );
 };
